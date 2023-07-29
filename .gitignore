@@ -1,7 +1,8 @@
 # Python env var
 .env/
 
-# Bank transactions
+# Transactions
+data/
 *.pdf
 *.csv
 
