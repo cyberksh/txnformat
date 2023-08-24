@@ -52,6 +52,7 @@ def main(
 
     with tempfile.NamedTemporaryFile() as tmp:
         tmp.write(formatted_data.encode(encoding="utf-8"))
+        tmp.flush()
         df = pl.read_csv(tmp.name)
 
     filtered_df = df.select(

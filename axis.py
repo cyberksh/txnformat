@@ -23,7 +23,7 @@ def cleanup_cc_data(data: str):
     return suffix_deleted
 
 
-def cleanup_bank_data(data: str):
+def cleanup_bank_data(data: str) -> str:
     prefix_match = re.search("Tran Date,CHQNO", data)
     if not prefix_match:
         raise ValueError("Something is wrong with the prefix match")
