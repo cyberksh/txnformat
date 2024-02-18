@@ -13,27 +13,21 @@ def cleanup_data(data: str) -> str:
         raise ValueError("Prefix match failed with data")
     prepended_cruft_deleted: str = data[prefix_match.start(0) :]
 
-    suffix_match = re.search("\*\*This is a", prepended_cruft_deleted)
+    suffix_match = re.search(r"\*\*This is a", prepended_cruft_deleted)
     if not suffix_match:
         raise ValueError("Suffix match failed with data")
-    suffix_cruft_deleted: str = prepended_cruft_deleted[
-        : suffix_match.start(0) - 1
-    ]
+    suffix_cruft_deleted: str = prepended_cruft_deleted[: suffix_match.start(0) - 1]
 
     commas_removed_data = re.sub(",", "", suffix_cruft_deleted)
     tabs_replaced_data = re.sub("\t", ",", commas_removed_data)
 
     # Handle special case
-    remove_spaces_debit = re.sub(
-        "No.,( )+Debit", "No.,Debit", tabs_replaced_data
-    )
+    remove_spaces_debit = re.sub("No.,( )+Debit", "No.,Debit", tabs_replaced_data)
     return remove_spaces_debit
 
 
 def convert_txn_data_to_float(col_name: str) -> pl.Expr:
-    return (
-        pl.col(col_name).str.strip().cast(pl.Float32, strict=False).fill_null(0)
-    )
+    return pl.col(col_name).str.strip().cast(pl.Float32, strict=False).fill_null(0)
 
 
 def convert_txn_data_to_date(col_name: str) -> pl.Expr:
@@ -43,7 +37,7 @@ def convert_txn_data_to_date(col_name: str) -> pl.Expr:
 def main(
     file_path: typing.Annotated[
         pathlib.Path, typer.Argument(help="Path to transactions file")
-    ]
+    ],
 ):
     with open(file_path, "r") as f:
         raw_data: str = f.read()

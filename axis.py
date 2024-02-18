@@ -34,16 +34,12 @@ def cleanup_bank_data(data: str) -> str:
     )
     if not suffix_match:
         raise ValueError("Something is wrong with the suffix match")
-    suffix_cruft_deleted: str = prepended_cruft_deleted[
-        : suffix_match.start(0) - 1
-    ]
+    suffix_cruft_deleted: str = prepended_cruft_deleted[: suffix_match.start(0) - 1]
     return suffix_cruft_deleted
 
 
 def convert_txn_data_to_float(col_name: str) -> pl.Expr:
-    return (
-        pl.col(col_name).str.strip().cast(pl.Float32, strict=False).fill_null(0)
-    )
+    return pl.col(col_name).str.strip().cast(pl.Float32, strict=False).fill_null(0)
 
 
 def convert_txn_data_to_date(col_name: str) -> pl.Expr:
@@ -78,7 +74,7 @@ def process_axis_cc(file_path: pathlib.Path) -> None:
         .then(
             pl.col("Amount (INR)")
             .str.replace_all(",", "")
-            .str.extract(r"(\d+)")
+            .str.extract(r"\d+\.\d+", group_index=0)
         )
         .otherwise(pl.lit(0))
         .alias("Debit"),
@@ -86,7 +82,7 @@ def process_axis_cc(file_path: pathlib.Path) -> None:
         .then(
             pl.col("Amount (INR)")
             .str.replace_all(",", "")
-            .str.extract(r"(\d+)")
+            .str.extract(r"\d+\.\d+", group_index=0)
         )
         .otherwise(pl.lit(0))
         .alias("Credit"),
