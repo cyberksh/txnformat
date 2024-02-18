@@ -45,14 +45,14 @@ def process_icici_cc(file_path: pathlib.Path) -> None:
     filtered_df = df.select(
         pl.col("date").str.to_date("%d/%m/%Y"),
         pl.col("description"),
-        pl.when(pl.col("type") == "CR")
-        .then(pl.col("value"))
-        .otherwise(pl.lit(0))
-        .alias("credit"),
         pl.when(pl.col("type") == "")
         .then(pl.col("value"))
         .otherwise(pl.lit(0))
         .alias("debit"),
+        pl.when(pl.col("type") == "CR")
+        .then(pl.col("value"))
+        .otherwise(pl.lit(0))
+        .alias("credit"),
     )
 
     typer.echo(filtered_df)
