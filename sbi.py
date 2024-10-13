@@ -27,7 +27,9 @@ def cleanup_data(data: str) -> str:
 
 
 def convert_txn_data_to_float(col_name: str) -> pl.Expr:
-    return pl.col(col_name).str.strip().cast(pl.Float32, strict=False).fill_null(0)
+    return (
+        pl.col(col_name).str.strip_chars().cast(pl.Float32, strict=False).fill_null(0)
+    )
 
 
 def convert_txn_data_to_date(col_name: str) -> pl.Expr:
@@ -60,6 +62,7 @@ def main(
     filtered_df.write_csv(
         file=f"{file_path.parent}/sbi-out.csv", date_format="%Y-%m-%d"
     )
+    typer.echo("File written to sbi-out.csv")
 
 
 if __name__ == "__main__":

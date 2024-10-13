@@ -16,7 +16,7 @@ def cleanup_cc_data(data: str):
         raise ValueError("Prefix match failed for credit card")
     prefix_deleted = data[prefix_match.start(0) :]
 
-    suffix_match = re.search("\*\* End of", prefix_deleted)
+    suffix_match = re.search(r"\*\* End of", prefix_deleted)
     if not suffix_match:
         raise ValueError("Suffix match failed for credit card")
     suffix_deleted = prefix_deleted[: suffix_match.start(0) - 1]
@@ -39,7 +39,9 @@ def cleanup_bank_data(data: str) -> str:
 
 
 def convert_txn_data_to_float(col_name: str) -> pl.Expr:
-    return pl.col(col_name).str.strip().cast(pl.Float32, strict=False).fill_null(0)
+    return (
+        pl.col(col_name).str.strip_chars().cast(pl.Float32, strict=False).fill_null(0)
+    )
 
 
 def convert_txn_data_to_date(col_name: str) -> pl.Expr:
